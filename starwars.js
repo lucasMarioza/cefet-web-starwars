@@ -17,3 +17,35 @@ play(
   },
   document.body
 );
+
+const listaFilmes = document.querySelector('#filmes ul')
+
+const NUMERO_PARA_ROMANO = {
+  1: 'I',
+  2: 'II',
+  3: 'III',
+  4: 'IV',
+  5: 'V',
+  6: 'VI',
+}
+
+function preparaEpisodio(numEpisodio){
+  const epRomano = NUMERO_PARA_ROMANO[numEpisodio].padEnd(3, ' ');
+  return `EPISODE ${epRomano}`;
+}
+
+
+function preparaTitulo(titulo, numEpisodio) {
+  return `${preparaEpisodio(numEpisodio)} - ${titulo}`;
+}
+
+function insereFilme({ title, episode_id }) {
+  let titulo = document.createTextNode(preparaTitulo(title, episode_id));
+  let elementoLista = document.createElement('li');
+  elementoLista.appendChild(titulo);
+  listaFilmes.appendChild(elementoLista);
+}
+
+fetch(`${API_ENDPOINT}/films`)
+  .then(response => response.json())
+  .then(({ results }) => results.forEach(insereFilme));
