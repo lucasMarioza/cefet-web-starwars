@@ -7,6 +7,7 @@
 const API_ENDPOINT = 'https://swapi.dev/api'
 
 import { play } from './music.js';
+import { restartAnimation } from './restart-animation.js';
 
 play(
   {
@@ -18,7 +19,8 @@ play(
   document.body
 );
 
-const listaFilmes = document.querySelector('#filmes ul')
+const listaFilmes = document.querySelector('#filmes ul');
+const elementoIntro = document.querySelector('pre.introducao');
 
 const NUMERO_PARA_ROMANO = {
   1: 'I',
@@ -34,15 +36,28 @@ function preparaEpisodio(numEpisodio){
   return `EPISODE ${epRomano}`;
 }
 
-
 function preparaTitulo(titulo, numEpisodio) {
   return `${preparaEpisodio(numEpisodio)} - ${titulo}`;
 }
 
-function insereFilme({ title, episode_id }) {
+function mudaIntro(episodio, titulo, conteudo) {
+  const intro = document.createTextNode(`
+    ${preparaEpisodio(episodio)}\n
+    ${titulo}\n
+    ${conteudo}
+  `);
+  return () => {
+    elementoIntro.innerHTML = '' 
+    elementoIntro.appendChild(intro);
+    restartAnimation(elementoIntro);
+  }
+}
+
+function insereFilme({ title, episode_id, opening_crawl }) {
   let titulo = document.createTextNode(preparaTitulo(title, episode_id));
   let elementoLista = document.createElement('li');
   elementoLista.appendChild(titulo);
+  elementoLista.addEventListener('click', mudaIntro(episode_id, title, opening_crawl));
   listaFilmes.appendChild(elementoLista);
 }
 
